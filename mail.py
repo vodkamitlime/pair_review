@@ -1,67 +1,81 @@
-import imaplib
-import email
 from email.header import decode_header
-import re
-import csv
+from datetime import datetime, timezone, timedelta
+import imaplib, re, csv, email
 
-# 저장할 csv 파일 만들어주
+
+# 저장할 csv 파일 만들기
 f = open('pair_feedback.csv', 'w', newline='')
 write = csv.writer(f)
-write.writerow(['#', '페어 이름', '스프린트', '잘한 점', '개선할 점', '메일 제목', '수신 일시'])
+write.writerow(['#', '날짜', '페어', '스프린트', '잘한 점', '개선할 점'])
 
-# User Credentials
-user = "##########"
-password = "##########"  # 2단계 인증 설정된 사용자의 경우 앱 비밀번호 생성해야
+# 유저 개인정보
+user = "#########"  # 이메일 주소
+password = "#########"  # 비밀번호
 
-# Connect to the IMAP server
+# IMAP 서버에 연결하기
 imap = imaplib.IMAP4_SSL("imap.gmail.com")
 imap.login(user, password)
 
-# status = message that indicates whether we received the message successfully
-# messages = number of total messages in the folder
-imap.select("inbox")  # ('OK', [b'25425'])
-status, messages = imap.uid('search', None, '(FROM "notifications@typeform.com")')
-messages = messages[0].split()  # list of all message ids
+# 접근하고자 하는 메일함 이름
+imap.select("[Gmail]/Important")
 
+# status = 이메일 접근 상태
+# messages = 선택한 조건에 해당하는 메일의 id 목록
+# ('OK', [b'00001 00002 .....'])
+status, messages = imap.uid('search', None, '(FROM "notifications@typeform.com")')
+messages = messages[0].split()
+
+# 각 메일에 대하여 실행
 for n, message in enumerate(messages):
 
-    res, msg = imap.uid('fetch', message, git "(RFC822)")  # Standard format for fetching email message
+    print(f"Writing email #{n} on file...")
+
+    res, msg = imap.uid('fetch', message, "(RFC822)")  # Standard format for fetching email message
     raw = msg[0][1]
     email_message = email.message_from_bytes(raw)  # type(email_message) == <class 'email.message.Message'>
 
-    # decode 'from', 'date' info
-    From, _ = decode_header(email_message.get("From"))[0]  # [0] 안 붙이면 [('notifications@typeform.com', None)]
-    date, _ = decode_header(email_message.get("Date"))[0]  # [0] 안 붙이면 = [('Thu, 08 Apr 2021 05:10:04 +0000', None)]
-
-    # decode 'subject' info
+    # decode 'subject' info (메일 제목)
     subject, encoding = decode_header(email_message["Subject"])[0]
     subject = subject.decode(encoding)  # 한국어로 디코딩하는 작업
 
-    # email_message.get_content_type() == 'text/html'
+    if 'Pair Review' in subject:
 
-    body = email_message.get_payload(decode=True).decode()
-    body = body[:body.rindex('<br/>')].replace('<br/>', ' ')
+        # decode 'date' (날짜) & format
+        temp, _ = decode_header(email_message.get("Date"))[0]  # date = 'Thu, 08 Apr 2021 05:10:04 +0000'
 
-    regex_dict = {
-        'sprint': '\[[\D]+\]',  # 대괄호 안이 Whitespace 가 아닌
-        'awesome': '[가-힣]+님이\s평가한\s[가-힣]+님의\s잘한\s점:',  # 한글 이름 + 기존 문장 값
-        'improve': '[가-힣]+님이\s생각한\s[가-힣]+님의\s개선하면\s좋을\s점:'  # 한글 이름 + 기존 문장 값
-    }
+        temp = datetime.strptime(temp, '%a, %d %b %Y %H:%M:%S %z')
+        # KST = timezone(timedelta(hours=9))
+        # newtemp = datetime(temp.year, temp.month, temp.day, temp.hour, temp.minute, temp.second, tzinfo=KST)
+        date = temp.strftime('%Y년 %m월 %d일')
 
-    index_dict = {}
+        # subject 에서 페어 이름 추출
+        match = re.search(r'[가-힣]+님의', subject)  # 'ㅇㅇㅇ님의' 문자열 추출
+        pair = match.group()  # 매치된 문자열 받아서 pair 변수에 할당
+        pair = pair[:-2]   # 이름만 남도록 슬라이싱
 
-    for key, value in regex_dict.items():
-        reg = re.compile(value, re.M)
-        match = reg.search(body)
-        index_dict[f'startindex_{key}'] = match.start()
-        index_dict[f'endindex_{key}'] = match.end()
+        # get mail body (메일 본문)
+        # email_message.get_content_type() == 'text/html'
+        body = email_message.get_payload(decode=True).decode()
+        body = body[:body.rindex('<br/>')].replace('<br/>', ' ') # 이메일 내용 (body) 의 시작점부터 마지막 <br/> 이 등장하는 지점까지 추출 후, 모든 <br/> 을 공백으로 대체
 
-    sprint = body[index_dict['startindex_sprint']:index_dict['startindex_awesome']]
-    is_awesome = body[index_dict['endindex_awesome']:index_dict['startindex_improve']]
-    to_improve = body[index_dict['endindex_improve']:]
+        # body 에서 Sprint 내용 추출
+        match = re.search(r'\[[\D]+\]', body) # 대괄호 안이 Whitespace 가 아닌 값 (예 : '[JS/Node]') 찾기
+        sprint = match.group()  # 매치된 문자열 받아서 sprint 변수에 할당
 
-    write.writerow([n, 'pair name', sprint, is_awesome, to_improve, subject, date])
+        # body 에서 잘한 점, 개선할 점 내용 추출
+        match = re.search(r'[가-힣]+님이\s평가한\s[가-힣]+님의\s잘한\s점:', body) # 한글 이름 + 기존 문장 내용 (예 : '김코딩님이 평가한 박해커님의 잘한 점:')
+        start_awesome, end_awesome = match.span() # '...잘한 점:' 문자열의 시작과 끝 인덱스 추출
 
+        match = re.search(r'[가-힣]+님이\s생각한\s[가-힣]+님의\s개선하면\s좋을\s점:', body) # 한글 이름 + 기존 문장 내용 (예 : '김코딩님이 평가한 박해커님의 개선하면 좋을 점:')
+        start_improve, end_improve = match.span() # '...개선하면 좋을 점:' 문자열의 시작과 끝 인덱스 추출
+
+        awesome = body[end_awesome:start_improve]
+        improve = body[end_improve:]
+
+        # csv 파일에 저장한 내용 쓰기
+        write.writerow([n, date, pair, sprint, awesome, improve])
+
+print("All complete!")
 f.close()
 imap.close()
 imap.logout()
