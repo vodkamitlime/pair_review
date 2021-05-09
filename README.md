@@ -1,4 +1,6 @@
-# 주요 기능: 
+# PAIR REVIEW 메일 csv 파일로 저장하기: 
+
+## 주요 기능:
 - Codestates SEB 과정 수강생들의 Gmail 계정으로 발송되는 Pair Review 이메일 내용을 csv 파일로 저장합니다. 
 - csv 파일 형식 참고용 예시 이미지
 ![예시이미지](./example.png)
