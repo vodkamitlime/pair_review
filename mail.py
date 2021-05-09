@@ -1,5 +1,5 @@
 from email.header import decode_header
-from datetime import datetime, timezone, timedelta
+from datetime import datetime
 import imaplib, re, csv, email
 
 
@@ -9,15 +9,15 @@ write = csv.writer(f)
 write.writerow(['#', '날짜', '페어', '스프린트', '잘한 점', '개선할 점'])
 
 # 유저 개인정보
-user = "#########"  # 이메일 주소
-password = "#########"  # 비밀번호
+user = "####"  # 이메일 주소 (ex. abcde@gmail.com)
+password = "####"  # 앱 비밀번호 (16자리)
 
 # IMAP 서버에 연결하기
 imap = imaplib.IMAP4_SSL("imap.gmail.com")
 imap.login(user, password)
 
 # 접근하고자 하는 메일함 이름
-imap.select("[Gmail]/Important")
+imap.select("INBOX") # 예) "중요한 편지함" 선택 시 "[Gmail]/Important" 로 변경
 
 # status = 이메일 접근 상태
 # messages = 선택한 조건에 해당하는 메일의 id 목록
@@ -44,8 +44,6 @@ for n, message in enumerate(messages):
         temp, _ = decode_header(email_message.get("Date"))[0]  # date = 'Thu, 08 Apr 2021 05:10:04 +0000'
 
         temp = datetime.strptime(temp, '%a, %d %b %Y %H:%M:%S %z')
-        # KST = timezone(timedelta(hours=9))
-        # newtemp = datetime(temp.year, temp.month, temp.day, temp.hour, temp.minute, temp.second, tzinfo=KST)
         date = temp.strftime('%Y년 %m월 %d일')
 
         # subject 에서 페어 이름 추출

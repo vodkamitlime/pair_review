@@ -1,36 +1,40 @@
-# Completed:
-- Obtain email from Gmail via IMAP server 
-- Decode email contents (Encoded in utf-8)
-- Trim unnecessary contents of email
-- Write contents on CSV file
-- Add name variable
-- Optimize code
+# 주요 기능: 
+- Codestates SEB 과정 수강생들의 Gmail 계정으로 발송되는 Pair Review 이메일 내용을 csv 파일로 저장합니다. 
+- csv 파일 형식 참고용 예시 이미지
+![예시이미지](./example.png)
 
-# In Progress:
-- Optimize date
-- Update file when new mail comes
-
-# test
 
 ## 실행 전 안내사항
-- user 정보를 잘 입력해주어야 함. 이메일, 비밀번호
-- 지메일 2단계 인증 설정된 경우 앱 비밀번호 생성해야 함 
-Google 계정 고객센터: 앱 비밀번호로 로그인
-https://support.google.com/accounts/answer/185833?hl=ko
-- csv 파일이 저장되는 경로는 mail.py 파일 경로와 동일함. 다른 곳에 저장하기 원한다면 경로 변경해주면 됨 
+1. Gmail 계정 2단계 인증을 설정해주어야 합니다. 
+	- 2단계 인증 설정하는 법: [Google 계정 고객센터](https://support.google.com/accounts/answer/185839?hl=ko)
+2. 2단계 인증 설정 후, 앱 비밀번호를 생성해야 합니다. 
+	- 앱 비밀번호를 생성하는 법: [Google 계정 고객센터](https://support.google.com/accounts/answer/185833?hl=ko)
+3. 현재 mail.py 파일의 user, password 변수는 #### 상태로 저장되어 있습니다. ####을 지우고, 해당 자리에 Gmail 계정과 생성한 앱 비밀번호를 입력해야 합니다.
+	- mail.py 12, 13번 줄 참조
+4. 현재는 접근하는 메일함이 "받은 편지함"(Inbox) 으로 설정되어 있으나, 다른 메일함으로도 변경 가능합니다. 변경을 원치 않는 경우 코드를 수정하지 않아도 됩니다.  
+	- mail.py 20번 줄 참조 
+	- 다른 메일함 선택 희망 시 Reference #4 참조
 
 
 ## 주의사항
-- 메일함 선택 가능. 레퍼런스 링크 4번 참조. but 전체 inbox 를 선택 시 속도 저하 있을 수 있음. 
-- python version 2점대 사용 시 한글로 된 주석을 제대로 읽지 못함 (ASCII 인코딩으로 되어 있어서 그럼. 3점대부터는 utf-8 로 인코딩되어 작동됨) 따라서 파이썬 버전을 3번대로 변경해주길 바람 
-[How to set Python3 as a default python version on MacOS?](https://dev.to/malwarebo/how-to-set-python3-as-a-default-python-version-on-mac-4jjf)
+- 계정의 전체 편지함(inbox)를 선택할 경우, 메일 데이터의 규모에 따라 실행 속도가 더딜 수 있습니다. 
+- [Python version 2.x 로 실행 시 mail.py의 한글 주석을 제대로 읽지 못하여 에러](https://github.com/vodkamitlime/TIL-Today-I-Learned/blob/main/02-Python/00-Version-encoding.md)가 발생합니다. 따라서 Python version 3.x 를 다운받아 터미널에서 사용하는 python version을 3.x로 변경한 후 실행해야 합니다.
+	- [How to set Python3 as a default python version on MacOS?](https://dev.to/malwarebo/how-to-set-python3-as-a-default-python-version-on-mac-4jjf)
+	- [Ubuntu에서 Python 버전을 변경하는 방법](https://codechacha.com/ko/change-python-version/)
+	- [Ubuntu Python 기본 실행 버전 설정/변경하기](https://ghostweb.tistory.com/803)
+- 아래와 같은 에러가 뜨는 경우, [구글 계정의 IMAP 액세스를 허용](https://support.google.com/mail/answer/7126229?hl=ko)해 주어야 합니다. 
+```python
+b'[ALERT] Your account is not enabled for IMAP use. Please visit your Gmail settings page and enable your account for IMAP access. (Failure)'
+```
+
 
 ### Reference:
 1. [How to Read Emails in Python](https://www.thepythoncode.com/article/reading-emails-in-python)
 2. [Python imaplib 을 통한 Gmail 읽기](https://its2eg.tistory.com/entry/Python-imaplib%EC%9D%84-%ED%86%B5%ED%95%9C-Gmail-%EC%9D%BD%EA%B8%B0)
 3. [Fetch & Convert Email in Python Programming](https://www.youtube.com/watch?v=bbPwv0TP2UQ&t=554s&ab_channel=PythonCodex)
 4. [IMAP Extensions](https://developers.google.com/gmail/imap/imap-extensions)
+5. [다른 이메일 플랫폼을 통해 Gmail 확인하기](https://support.google.com/mail/answer/7126229?hl=ko#zippy=%2C%EC%9D%B4%EB%A9%94%EC%9D%BC-%ED%81%B4%EB%9D%BC%EC%9D%B4%EC%96%B8%ED%8A%B8%EC%97%90-%EB%A1%9C%EA%B7%B8%EC%9D%B8%ED%95%A0-%EC%88%98-%EC%97%86%EC%9D%8C)
 
-
-### Footnotes
-- 메일의 첨부파일을 받아오고 싶다면 레퍼런스 링크 1번을 참고해주세요 (**"attachment" in content_disposition** 부분)
+### Footnotes : 작업중인 부가기능
+- Optimize date's timezone (Current: utc / Expected: kst)
+- Update file automatically when new mail arrives
