@@ -12,7 +12,7 @@ write.writerow(['#', '날짜', '페어', '스프린트', '잘한 점', '개선�
 # 유저 개인정보 (환경변수 설정)
 load_dotenv()
 user = os.environ.get('mail')  # 이메일 주소 (ex. abcde@gmail.com)
-password = os.environ.get('pass')  # 앱 비밀번호 (16자리)
+password = os.environ.get('password')  # 앱 비밀번호 (16자리)
 
 # IMAP 서버에 연결하기
 imap = imaplib.IMAP4_SSL("imap.gmail.com")

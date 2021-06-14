@@ -12,12 +12,12 @@
 2. 2단계 인증 설정 후, 앱 비밀번호를 생성해야 합니다. 
 	- 앱 비밀번호를 생성하는 법: [Google 계정 고객센터](https://support.google.com/accounts/answer/185833?hl=ko)
 3. mail.py 파일의 user, password 변수 설정을 위해서는 환경 변수를 지정해주어야 합니다. (mail.py 14, 15번 줄 참조) 다음과 같은 단계를 따라주시기 바랍니다.
-	3-1. `mail.py` 파일이 위치한 경로의 CLI 창에 `pip install python-dotenv` 실행
-	3-2. 같은 경로에 `.env` 파일 생성
-	3-3. `.env` 파일 내 다음과 같은 변수 입력
+	- `mail.py` 파일이 위치한 경로의 CLI 창에 `pip install python-dotenv` 실행
+	- 같은 경로에 `.env` 파일 생성
+	- `.env` 파일 내 다음과 같은 변수 입력
 	```python
 	mail = 'kimcoding@gmail.com' # 본인 이메일 입력
-	pass = 'abcdefghijklmnop' # 본인 앱 비밀번호 입력 (16자리)
+	password = 'abcdefghijklmnop' # 본인 앱 비밀번호 입력 (16자리)
 	```
 
 ### (Optional : 선택사항)
