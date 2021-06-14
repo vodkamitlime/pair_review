@@ -1,16 +1,18 @@
 from email.header import decode_header
 from datetime import datetime
 import imaplib, re, csv, email
-
+import os
+from dotenv import load_dotenv
 
 # 저장할 csv 파일 만들기
 f = open('pair_feedback.csv', 'w', newline='')
 write = csv.writer(f)
 write.writerow(['#', '날짜', '페어', '스프린트', '잘한 점', '개선할 점'])
 
-# 유저 개인정보
-user = "####"  # 이메일 주소 (ex. abcde@gmail.com)
-password = "####"  # 앱 비밀번호 (16자리)
+# 유저 개인정보 (환경변수 설정)
+load_dotenv()
+user = os.environ.get('mail')  # 이메일 주소 (ex. abcde@gmail.com)
+password = os.environ.get('pass')  # 앱 비밀번호 (16자리)
 
 # IMAP 서버에 연결하기
 imap = imaplib.IMAP4_SSL("imap.gmail.com")
