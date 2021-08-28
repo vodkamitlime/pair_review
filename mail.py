@@ -56,10 +56,15 @@ for n, message in enumerate(messages):
         # get mail body (메일 본문)
         # email_message.get_content_type() == 'text/html'
 
-
         body = email_message.get_payload(decode=True).decode()
-        body = body[:body.rindex('<br/>')].replace('<br/>', ' ') # 이메일 내용 (body) 의 시작점부터 마지막 <br/> 이 등장하는 지점까지 추출 후, 모든 <br/> 을 공백으로 대체
+        body = body[:body.rindex('<br/>')].replace('<br/>', ' ').replace('▶︎', '') # 이메일 내용 (body) 의 시작점부터 마지막 <br/> 이 등장하는 지점까지 추출 후, 모든 <br/> 을 공백으로 대체
         body = re.sub(r'<[^>]+>', '', body)
+
+        temp_match = re.search(r'아직 [가-힣]+님에게', body)
+        if temp_match: 
+            temp_start, _ = temp_match.span()
+            body = body[:temp_start]
+
         # body 에서 Sprint 내용 추출
         match = re.search(r'\[[\D]+\]', body) # 대괄호 안이 Whitespace 가 아닌 값 (예 : '[JS/Node]') 찾기
         sprint = match.group() if match else '[해당 없음]' # 매치된 문자열 받아서 sprint 변수에 할당
