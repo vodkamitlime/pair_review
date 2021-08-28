@@ -39,8 +39,8 @@ for n, message in enumerate(messages):
     # decode 'subject' info (메일 제목)
     subject, encoding = decode_header(email_message["Subject"])[0]
     subject = subject.decode(encoding)  # 한국어로 디코딩하는 작업
-
-    if 'Pair Review' in subject:
+    print(subject)
+    if 'Review' in subject:
 
         # decode 'date' (날짜) & format
         temp, _ = decode_header(email_message.get("Date"))[0]  # date = 'Thu, 08 Apr 2021 05:10:04 +0000'
@@ -55,18 +55,21 @@ for n, message in enumerate(messages):
 
         # get mail body (메일 본문)
         # email_message.get_content_type() == 'text/html'
+
+
         body = email_message.get_payload(decode=True).decode()
         body = body[:body.rindex('<br/>')].replace('<br/>', ' ') # 이메일 내용 (body) 의 시작점부터 마지막 <br/> 이 등장하는 지점까지 추출 후, 모든 <br/> 을 공백으로 대체
-
+        body = re.sub(r'<[^>]+>', '', body)
         # body 에서 Sprint 내용 추출
         match = re.search(r'\[[\D]+\]', body) # 대괄호 안이 Whitespace 가 아닌 값 (예 : '[JS/Node]') 찾기
-        sprint = match.group()  # 매치된 문자열 받아서 sprint 변수에 할당
+        sprint = match.group() if match else '[해당 없음]' # 매치된 문자열 받아서 sprint 변수에 할당
 
         # body 에서 잘한 점, 개선할 점 내용 추출
-        match = re.search(r'[가-힣]+님이\s평가한\s[가-힣]+님의\s잘한\s점:', body) # 한글 이름 + 기존 문장 내용 (예 : '김코딩님이 평가한 박해커님의 잘한 점:')
+        match = re.search(r'[가-힣]+님이\s평가한\s[가-힣]+님의\s잘한\s점[ ]*:', body) # 한글 이름 + 기존 문장 내용 (예 : '김코딩님이 평가한 박해커님의 잘한 점:')
         start_awesome, end_awesome = match.span() # '...잘한 점:' 문자열의 시작과 끝 인덱스 추출
 
-        match = re.search(r'[가-힣]+님이\s생각한\s[가-힣]+님의\s개선하면\s좋을\s점:', body) # 한글 이름 + 기존 문장 내용 (예 : '김코딩님이 평가한 박해커님의 개선하면 좋을 점:')
+        match = re.search(r'[가-힣]+님이\s생각한\s[가-힣]+님의\s개선하면\s좋을\s점[ ]*:', body) # 한글 이름 + 기존 문장 내용 (예 : '김코딩님이 평가한 박해커님의 개선하면 좋을 점:')
+        match = match if match else re.search(r'[가-힣]+님이\s평가한\s[가-힣]+님의\s개선할\s점[ ]*:', body) 
         start_improve, end_improve = match.span() # '...개선하면 좋을 점:' 문자열의 시작과 끝 인덱스 추출
 
         awesome = body[end_awesome:start_improve]
