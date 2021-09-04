@@ -8,7 +8,7 @@
 ![예시이미지](./mail_before_1.png)<br>
 ![예시이미지](./mail_before_2.png)<br>
 - After: csv 파일 형태로 정리된 전체 pair review 메일
-![예시이미지](./example.png)
+![예시이미지](./mail_after.png)
 
 
 ## 실행 전 안내사항
