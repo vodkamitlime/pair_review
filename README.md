@@ -1,8 +1,13 @@
 # PAIR REVIEW 메일 csv 파일로 저장하기: 
 
 ## 주요 기능:
-- Codestates SEB 과정 수강생들의 Gmail 계정으로 발송되는 Pair Review 이메일 내용을 csv 파일로 저장합니다. 
-- csv 파일 형식 참고용 예시 이미지
+- Codestates SEB 과정 수강생들의 Gmail 계정으로 발송되는 Pair Review 이메일 내용을 csv 파일로 저장합니다.
+
+## Before & After 이미지
+- Before: Gmail 계정에 누적되는 pair review 메일과 내용
+![예시이미지](./mail_before_1.png)<br>
+![예시이미지](./mail_before_2.png)<br>
+- After: csv 파일 형태로 정리된 전체 pair review 메일
 ![예시이미지](./example.png)
 
 
