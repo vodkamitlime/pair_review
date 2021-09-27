@@ -68,6 +68,8 @@ for n, message in enumerate(messages):
         # body 에서 Sprint 내용 추출
         match = re.search(r'\[[\D]+\]', body) # 대괄호 안이 Whitespace 가 아닌 값 (예 : '[JS/Node]') 찾기
         sprint = match.group() if match else '[해당 없음]' # 매치된 문자열 받아서 sprint 변수에 할당
+        if 'Project' in subject:
+            sprint = '[Project]'
 
         # body 에서 잘한 점, 개선할 점 내용 추출
         match = re.search(r'[가-힣]+님이\s평가한\s[가-힣]+님의\s잘한\s점[ ]*:', body) # 한글 이름 + 기존 문장 내용 (예 : '김코딩님이 평가한 박해커님의 잘한 점:')
