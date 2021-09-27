@@ -1,7 +1,6 @@
 from email.header import decode_header
 from datetime import datetime
-import imaplib, re, csv, email
-import os
+import imaplib, re, csv, email, html, os
 from dotenv import load_dotenv
 
 # 저장할 csv 파일 만들기
@@ -65,6 +64,8 @@ for n, message in enumerate(messages):
             temp_start, _ = temp_match.span()
             body = body[:temp_start]
 
+        body = html.unescape(body)
+        
         # body 에서 Sprint 내용 추출
         match = re.search(r'\[[\D]+\]', body) # 대괄호 안이 Whitespace 가 아닌 값 (예 : '[JS/Node]') 찾기
         sprint = match.group() if match else '[해당 없음]' # 매치된 문자열 받아서 sprint 변수에 할당
