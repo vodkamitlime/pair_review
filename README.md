@@ -54,6 +54,5 @@ Please visit your Gmail settings page and enable your account for IMAP access.
 4. [IMAP Extensions](https://developers.google.com/gmail/imap/imap-extensions)
 5. [다른 이메일 플랫폼을 통해 Gmail 확인하기](https://support.google.com/mail/answer/7126229?hl=ko#zippy=%2C%EC%9D%B4%EB%A9%94%EC%9D%BC-%ED%81%B4%EB%9D%BC%EC%9D%B4%EC%96%B8%ED%8A%B8%EC%97%90-%EB%A1%9C%EA%B7%B8%EC%9D%B8%ED%95%A0-%EC%88%98-%EC%97%86%EC%9D%8C)
 
-### Footnotes : 작업중인 부가기능
-- Optimize date's timezone (Current: utc / Expected: kst)
-- Update file automatically when new mail arrives
+### Footnotes : 
+- Pair review 웹 서비스 제작중
